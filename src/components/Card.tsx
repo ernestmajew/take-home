@@ -4,9 +4,7 @@ import { IconButton } from "./IconButton";
 import { ChevronDownIcon, ChevronUpIcon } from "./icons";
 
 type CardProps = {
-  id: ListItem["id"];
-  title: ListItem["title"];
-  description: ListItem["description"];
+  card: ListItem;
   expansion?: {
     isExpanded: boolean;
     onToggle: (id: number) => void;
@@ -17,28 +15,25 @@ type CardProps = {
   };
 };
 
-export const Card: FC<CardProps> = ({
-  id,
-  title,
-  description,
-  expansion,
-  action,
-}) => {
+export const Card: FC<CardProps> = ({ card, expansion, action }) => {
   return (
     <div className="border border-black px-2 py-1.5">
       <div className="flex justify-between mb-0.5 items-center">
-        <h1 className="font-medium">{title}</h1>
+        <h1 className="font-medium">{card.title}</h1>
         <div className="flex">
           {expansion && (
             <IconButton
-              onClick={() => expansion.onToggle(id)}
+              onClick={() => expansion.onToggle(card.id)}
               icon={
                 expansion.isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />
               }
             />
           )}
           {action && (
-            <IconButton onClick={() => action.onClick(id)} icon={action.icon} />
+            <IconButton
+              onClick={() => action.onClick(card.id)}
+              icon={action.icon}
+            />
           )}
         </div>
       </div>
@@ -50,7 +45,9 @@ export const Card: FC<CardProps> = ({
               : "grid-rows-[0fr] opacity-0"
           }`}
         >
-          <p className="overflow-hidden text-sm ease-in-out">{description}</p>
+          <p className="overflow-hidden text-sm ease-in-out">
+            {card.description}
+          </p>
         </div>
       )}
     </div>
