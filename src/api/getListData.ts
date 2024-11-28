@@ -17,15 +17,21 @@ export const useGetListData = () => {
       await sleep(1000);
 
       if (getRandom() > 85) {
-        console.error("An unexpected error occurred!");
-        throw new Error("👀");
+        throw new Error("Failed to fetch list data: Random error simulation");
       }
 
-      const mockData = mockJson as Omit<ListItem, "isVisible">[];
-
-      return shuffle(mockData).map((item) => {
-        return { ...item, isVisible: getRandom() > 50 ? true : false };
-      });
+      try {
+        const mockData = mockJson as Omit<ListItem, "isVisible">[];
+        return shuffle(mockData).map((item) => ({
+          ...item,
+          isVisible: getRandom() > 50,
+        }));
+      } catch (error) {
+        console.error("[ListData]", error);
+        throw error instanceof Error
+          ? error
+          : new Error("Unknown error occurred");
+      }
     },
   });
 
@@ -38,8 +44,7 @@ const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const shuffle = <T extends any[]>(array: T): T => {
+const shuffle = <T>(array: T[]): T[] => {
   for (let i = array.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     const temp = array[i];
